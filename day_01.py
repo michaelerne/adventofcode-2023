@@ -13,12 +13,6 @@ DIGITS = [
 ]
 
 
-def startswith_number(line: str):
-    for value, digit in enumerate(DIGITS, start=1):
-        if line.startswith(digit):
-            return value
-
-
 def parse_data(data: str):
     lines = data.split('\n')
     digit_lines = []
