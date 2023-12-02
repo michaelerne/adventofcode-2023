@@ -1,55 +1,52 @@
-from run_util import run_puzzle
+from collections import defaultdict
+
 import parse
+
+from run_util import run_puzzle
+
+COLORS = ['blue', 'red', 'green']
 
 
 def parse_data(input):
-    data = {}
-    for line in input.split('\n'):
-        left, right = line.split(': ')
-        game_id = int(left.split(' ')[-1])
-        data[game_id] = {'reveals': []}
-        max_revealed = dict()
-        for reveal in right.split('; '):
-            reveal_data = {}
-            for show in reveal.split(', '):
-                amount, color = show.split(' ')
-                reveal_data[color] = int(amount)
-                max_revealed[color] = max(max_revealed.get(color, -1), int(amount))
-            data[game_id]['reveals'].append(reveal_data)
-        data[game_id]['max'] = max_revealed
+    data = dict()
+
+    for (game_id, game_data) in parse.findall('Game {:d}: {}\n', input + '\n'):
+        by_color = defaultdict(list)
+
+        for reveal in game_data.split('; '):
+            for match in parse.findall('{amount:d} {color:w}', reveal):
+                by_color[match['color']].append(match['amount'])
+
+        data[game_id] = {
+            color: max(by_color[color])
+            for color in COLORS
+        }
     return data
 
 
 def part_a(data):
+    data = parse_data(data)
+
     max_possible_by_color = {
         'red': 12,
         'green': 13,
         'blue': 14
     }
-    data = parse_data(data)
 
-    sum_valid = 0
-    for game_id, game_data in data.items():
-        violation_found = False
-        for color, max_possible in max_possible_by_color.items():
-            if game_data['max'][color] > max_possible:
-                violation_found = True
-        if not violation_found:
-            sum_valid += game_id
-
-
-    return sum_valid
+    return sum(
+        game_id
+        for game_id, game_data in data.items()
+        if all(game_data[color] <= max_possible_by_color[color] for color in COLORS)
+    )
 
 
 def part_b(data):
-
     data = parse_data(data)
 
-    solution = 0
-    for game_id, game_data in data.items():
-        solution += game_data['max']['blue'] * game_data['max']['red'] * game_data['max']['green']
-
-    return solution
+    return sum(
+        game_data['blue'] * game_data['red'] * game_data['green']
+        for game_data in data.values()
+    )
 
 
 def main():
