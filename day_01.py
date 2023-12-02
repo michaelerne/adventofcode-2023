@@ -12,17 +12,17 @@ DIGITS = [
     'nine'
 ]
 
-
-def parse_data(data: str):
+def parse_data(data: str, parse_words=False):
     lines = data.split('\n')
     digit_lines = []
     for line in lines:
         digit_line = []
 
         for index, char in enumerate(line):
-            for value, digit in enumerate(DIGITS, start=1):
-                if line[index:].startswith(digit):
-                    digit_line.append(value)
+            if parse_words:
+                for value, digit in enumerate(DIGITS, start=1):
+                    if line[index:].startswith(digit):
+                        digit_line.append(value)
             if char.isnumeric():
                 digit_line.append(int(char))
         digit_lines.append(digit_line)
@@ -40,7 +40,7 @@ def part_a(data):
 
 
 def part_b(data):
-    data = parse_data(data)
+    data = parse_data(data, parse_words=True)
     sum = 0
     for line in data:
         number = 10 * line[0] + line[-1]
