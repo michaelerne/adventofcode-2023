@@ -1,12 +1,14 @@
-from run_util import run_puzzle
 from collections import defaultdict
 from itertools import product
 
+from run_util import run_puzzle
+
 
 def parse_data(input):
-    symbols = set()
-    gears = set()
+    symbols = dict()
+    neighbors = defaultdict(list)
     digits = dict()
+
     for y, row in enumerate(input.split('\n')):
         for x, c in enumerate(row):
             if c == '.':
@@ -14,11 +16,14 @@ def parse_data(input):
             if c.isdigit():
                 digits[(x, y)] = c
             else:  # symbol
-                symbols.add((x, y))
-                if c == '*':
-                    gears.add((x, y))
+                symbols[(x, y)] = c
 
-    return digits, symbols, gears
+    for number, parts in get_numbers(digits):
+        possible_connected_symbols = {(x + d_x, y + d_y) for (x, y), d_x, d_y in product(parts, [-1, 0, 1], [-1, 0, 1])}
+        for neighbor in possible_connected_symbols.intersection(symbols):
+            neighbors[neighbor].append(number)
+
+    return symbols, neighbors
 
 
 def get_numbers(digits):
@@ -41,41 +46,22 @@ def get_numbers(digits):
 
 
 def part_a(data):
-    digits, symbols, _gears = parse_data(data)
+    symbols, neighbors = parse_data(data)
 
-    numbers = get_numbers(digits)
-
-    solution = 0
-
-    for number, parts in numbers:
-        for (x, y) in parts:
-            if any([(x + d_x, y + d_y) in symbols for d_x in [-1, 0, 1] for d_y in [-1, 0, 1]]):
-                solution += number
-                break
-
-    return solution
+    return sum(
+        sum(neighbors[symbol])
+        for symbol in symbols
+    )
 
 
 def part_b(data):
-    digits, _symbols, gears = parse_data(data)
+    symbols, neighbors = parse_data(data)
 
-    numbers = get_numbers(digits)
-
-    solution = 0
-
-    gear_numbers = defaultdict(list)
-
-    for number, parts in numbers:
-        for (x, y), d_x, d_y in product(parts, [-1, 0, 1], [-1, 0, 1]):
-            if (x + d_x, y + d_y) in gears:
-                gear_numbers[(x + d_x, y + d_y)].append(number)
-                break
-
-    for numbers in gear_numbers.values():
-        if len(numbers) == 2:
-            solution += numbers[0] * numbers[1]
-
-    return solution
+    return sum(
+        neighbors[symbol][0] * neighbors[symbol][1]
+        for symbol, symbol_type in symbols.items()
+        if symbol_type == '*' and len(neighbors[symbol]) == 2
+    )
 
 
 def main():
