@@ -1,5 +1,5 @@
 from run_util import run_puzzle
-
+from collections import defaultdict
 
 def parse_data(input):
     cards = []
@@ -15,27 +15,23 @@ def parse_data(input):
 
 def part_a(input):
     cards = parse_data(input)
-    solution = 0
-    for winning, play in cards:
-        matching = play.intersection(winning)
-        if matching:
-            score = 2 ** (len(matching) - 1)
-        else:
-            score = 0
-        solution += score
-    return solution
 
+
+    return sum(
+        1 << (matching_count - 1)
+        for winning, play in cards
+        if (matching_count := len(play.intersection(winning))) > 0
+    )
 
 def part_b(input):
     cards = parse_data(input)
-    card_by_id = {index: card for index, card in enumerate(cards)}
-
-    copies = {index: 1 for index in card_by_id.keys()}
+    copies = {index: 1 for index in range(len(cards))}
 
     for index, (winning, play) in enumerate(cards):
         matching = play.intersection(winning)
         for i in range(len(matching)):
             copies[index + i + 1] += copies[index]
+
     return sum(x for x in copies.values())
 
 
