@@ -1,5 +1,5 @@
 from run_util import run_puzzle
-from collections import defaultdict
+
 
 def parse_data(input):
     cards = []
@@ -16,12 +16,12 @@ def parse_data(input):
 def part_a(input):
     cards = parse_data(input)
 
-
     return sum(
         1 << (matching_count - 1)
         for winning, play in cards
         if (matching_count := len(play.intersection(winning))) > 0
     )
+
 
 def part_b(input):
     cards = parse_data(input)
