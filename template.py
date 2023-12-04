@@ -1,13 +1,17 @@
 from run_util import run_puzzle
 
 
-def part_a(data):
-    input = [int(x) for x in data.split(',')]
+def parse_data(input):
+    return []
+
+
+def part_a(input):
+    data = parse_data(input)
     return 0
 
 
-def part_b(data):
-    input = [int(x) for x in data.split(',')]
+def part_b(input):
+    data = parse_data(input)
     return 0
 
 
