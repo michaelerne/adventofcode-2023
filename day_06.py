@@ -1,4 +1,3 @@
-import math
 from functools import reduce
 from operator import mul
 
@@ -20,7 +19,7 @@ def get_ways_to_win(time, distance):
     lowest_win = 0
     highest_win = time
 
-    approx_step = int(math.sqrt(time))
+    approx_step = int(time ** 0.5)
 
     while (time - lowest_win) * lowest_win <= distance:
         lowest_win += approx_step
