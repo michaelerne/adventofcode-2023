@@ -1,17 +1,17 @@
 from run_util import run_puzzle
 
 
-def parse_data(input):
+def parse_data(data):
     return []
 
 
-def part_a(input):
-    data = parse_data(input)
+def part_a(data):
+    data = parse_data(data)
     return 0
 
 
-def part_b(input):
-    data = parse_data(input)
+def part_b(data):
+    data = parse_data(data)
     return 0
 
 
