@@ -1,8 +1,4 @@
-import math
-
 from run_util import run_puzzle
-from collections import deque
-from typing import Dict, Tuple, List, Set
 
 DIRECTIONS = {
     ('N', '|'): 'N',
@@ -77,7 +73,6 @@ def part_b(data):
         min_y = min(min_y, y)
         max_x = max(max_x, x)
         max_y = max(max_y, y)
-
 
     solution = 0
 
