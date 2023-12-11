@@ -4,9 +4,9 @@ from aocd import get_data, submit
 
 
 def _run_part(day, description, fn, data):
-    start = time.process_time_ns()
+    start = time.perf_counter_ns()
     result = fn(data)
-    end = time.process_time_ns()
+    end = time.perf_counter_ns()
     print(f"day {day} - {description} -> result [{result}], duration {(end - start) / 1E6} ms")
     return result
 

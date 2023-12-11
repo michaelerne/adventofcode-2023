@@ -4,7 +4,7 @@ import time
 
 from aocd import get_data, submit
 
-days_solved = 10
+days_solved = 11
 
 from multiprocessing import Pool
 
