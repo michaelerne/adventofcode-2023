@@ -3,7 +3,7 @@ from itertools import combinations
 from run_util import run_puzzle
 
 
-def parse_data(data):
+def parse_data(data, expand):
     lines = data.split('\n')
     galaxies = []
     x_has_galaxy = [False] * len(lines[0])
@@ -16,43 +16,37 @@ def parse_data(data):
                 x_has_galaxy[x] = True
                 y_has_galaxy[y] = True
 
-    x_has_no_galaxy = [not has_galaxy for has_galaxy in x_has_galaxy]
-    y_has_no_galaxy = [not has_galaxy for has_galaxy in y_has_galaxy]
+    x_expand = {x for x, has_galaxy in enumerate(x_has_galaxy) if not has_galaxy}
+    y_expand = {y for y, has_galaxy in enumerate(y_has_galaxy) if not has_galaxy}
 
-    return galaxies, x_has_no_galaxy, y_has_no_galaxy
+    expanded_galaxies = [
+        (
+            x + sum(expand for row in x_expand if row < x),
+            y + sum(expand for col in y_expand if col < y)
+        )
+        for x, y in galaxies
+    ]
+
+    return expanded_galaxies
 
 
 def part_a(data):
-    galaxies, x_has_no_galaxy, y_has_no_galaxy = parse_data(data)
+    expanded_galaxies = parse_data(data, 1)
 
-    solution = 0
-    for (x_1, y_1), (x_2, y_2) in combinations(galaxies, 2):
-
-        x_1, x_2 = min(x_1, x_2), max(x_1, x_2)
-        y_1, y_2 = min(y_1, y_2), max(y_1, y_2)
-
-        count = x_2 - x_1 + sum(x_has_no_galaxy[x_1:x_2 + 1])
-        count += y_2 - y_1 + sum(y_has_no_galaxy[y_1:y_2 + 1])
-
-        solution += count
-
-    return solution
+    return sum(
+        abs(x_1 - x_2) + abs(y_1 - y_2)
+        for (x_1, y_1), (x_2, y_2) in combinations(expanded_galaxies, 2)
+    )
 
 
 def part_b(data):
-    galaxies, x_has_no_galaxy, y_has_no_galaxy = parse_data(data)
-    solution = 0
-    for (x_1, y_1), (x_2, y_2) in combinations(galaxies, 2):
+    expanded_galaxies = parse_data(data, 999999)
 
-        x_1, x_2 = min(x_1, x_2), max(x_1, x_2)
-        y_1, y_2 = min(y_1, y_2), max(y_1, y_2)
+    return sum(
+        abs(x_1 - x_2) + abs(y_1 - y_2)
+        for (x_1, y_1), (x_2, y_2) in combinations(expanded_galaxies, 2)
+    )
 
-        count = x_2 - x_1 + sum(x_has_no_galaxy[x_1:x_2 + 1]) * (1000000 - 1)
-        count += y_2 - y_1 + sum(y_has_no_galaxy[y_1:y_2 + 1]) * (1000000 - 1)
-
-        solution += count
-
-    return solution
 
 def main():
     examples = [
