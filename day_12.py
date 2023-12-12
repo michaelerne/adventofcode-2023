@@ -3,56 +3,53 @@ from functools import cache
 from run_util import run_puzzle
 
 
-def parse_data(data):
+def parse_data(data, copies=1):
     lines = data.split('\n')
     rows = []
     for line in lines:
         pattern, splits = line.split()
         splits = tuple(int(number) for number in splits.split(','))
+
+        pattern = '?'.join((pattern,) * copies)
+        splits = splits * copies
+
         rows.append([pattern, splits])
     return rows
 
 
 @cache
-def count_permutations(pattern, pattern_length, splits):
-    if len(splits) == 0:
-        if all(c in '.?' for c in pattern):
+def count_permutations(pattern, groups):
+    if len(pattern) == 0:
+        if len(groups) == 0:
             return 1
-        return 0
+        else:
+            return 0
 
-    current_split, remaining_splits = splits[0], splits[1:]
-    after = sum(remaining_splits) + len(remaining_splits)
+    if pattern[0] == "#":
+        if len(groups) == 0 or len(pattern) < groups[0] or any(c == "." for c in pattern[:groups[0]]):
+            return 0
+        if len(groups) > 1:
+            if len(pattern) < groups[0] + 1 or pattern[groups[0]] == "#":
+                return 0
+            return count_permutations(pattern[groups[0] + 1:], groups[1:])
+        else:
+            return count_permutations(pattern[groups[0]:], groups[1:])
 
-    count = 0
+    if pattern[0] == ".":
+        return count_permutations(pattern.strip("."), groups)
 
-    for before in range(pattern_length - after - current_split + 1):
-        candidate = '.' * before + '#' * current_split + '.'
-        if all(c_0 == '?' or c_0 == c_1 for c_0, c_1 in zip(pattern, candidate)):
-            count += count_permutations(
-                pattern[len(candidate):],
-                pattern_length - current_split - before - 1,
-                remaining_splits
-            )
-
-    return count
+    if pattern[0] == "?":
+        return count_permutations(pattern.replace("?", ".", 1), groups) + count_permutations(pattern.replace("?", "#", 1), groups)
 
 
 def part_a(data):
     rows = parse_data(data)
-    solution = 0
-    for pattern, splits in rows:
-        solution += count_permutations(pattern, len(pattern), splits)
-    return solution
+    return sum(count_permutations(pattern, splits) for pattern, splits in rows)
 
 
 def part_b(data):
-    rows = parse_data(data)
-    solution = 0
-    for pattern, splits in rows:
-        pattern = '?'.join((pattern,) * 5)
-        splits = splits * 5
-        solution += count_permutations(pattern, len(pattern), splits)
-    return solution
+    rows = parse_data(data, copies=5)
+    return sum(count_permutations(pattern, splits) for pattern, splits in rows)
 
 
 def main():
