@@ -1,10 +1,9 @@
 import importlib
 import itertools
+import os
 import time
 
 from aocd import get_data, submit
-
-days_solved = 11
 
 from multiprocessing import Pool
 
@@ -35,6 +34,7 @@ def solve_day_part(day_and_part):
 
 
 def main():
+    days_solved = max(int(file.split('.')[0][-2:]) for file in os.listdir(os.path.dirname(__file__)) if file.startswith('day_'))
     days_and_parts = itertools.product(range(1, days_solved + 1), ['a', 'b'])
 
     with Pool(processes=32) as pool:
