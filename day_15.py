@@ -8,9 +8,7 @@ def parse_data(data):
 def hash(string):
     value = 0
     for char in string:
-        value += ord(char)
-        value *= 17
-        value %= 256
+        value = ((value + ord(char)) * 17) % 256
     return value
 
 
