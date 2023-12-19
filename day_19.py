@@ -48,7 +48,6 @@ def parse_data(s):
                     )
                 )
             else:
-                # rules.append(rule)
                 rules.append(
                     (
                         None,
