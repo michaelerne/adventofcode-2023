@@ -121,7 +121,7 @@ def combinations(workflows, workflow_name, xmas):
 def part_b(s):
     workflows, _ = parse_data(s)
 
-    answer = combinations(workflows, 'in', {k: set(range(1, 4001)) for k in 'xmas'})
+    answer = combinations(workflows, 'in', {k: set(range(1, BOUNDARY)) for k in 'xmas'})
 
     return answer
 
