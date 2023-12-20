@@ -1,117 +1,8 @@
-import collections
-import math
-from collections import deque
+from collections import deque, defaultdict
+from math import lcm
 
 from run_util import run_puzzle
 
-
-# def parse_data(data):
-#     broadcast_destinations = {}
-#     flipflops_destinations = {}
-#     conjunction_sources = defaultdict(list)
-#     conjunction_destinations = {}
-#     destination_type = {}
-#
-#     names = []
-#
-#     first_module = data.split(' -> ')[0].replace('%', '').replace('&', '')
-#     for line in data.split('\n'):
-#
-#         name, destination = line.split(' -> ')
-#
-#         if line.startswith('%'):  # flipflop
-#             flipflops_destinations[name[1:]] = destination
-#             destination_type[name[1:]] = 'flip-flop'
-#             names.append(name[1:])
-#         elif name.startswith('&'):  # conjunction
-#             conjunction_destinations[name[1:]] = destination
-#             destination_type[name[1:]] = 'conjunction'
-#             names.append(name[1:])
-#         else:  # broadcaster
-#             broadcast_destinations[name] = destination.split(', ')
-#             destination_type[name] = 'broadcast'
-#             names.append(name)
-#
-#     name_to_id = {name: id for id, name in enumerate(names)}
-#
-#     for name, destinations in broadcast_destinations.items():
-#         for destination in destinations:
-#             if destination in conjunction_destinations:
-#                 conjunction_sources[destination].append(name)
-#     for name, destination in flipflops_destinations.items():
-#         if destination in conjunction_destinations:
-#             conjunction_sources[destination].append(name)
-#     for name, destination in conjunction_destinations.items():
-#         if destination in conjunction_destinations:
-#             conjunction_sources[destination].append(name)
-#
-#     return destination_type, broadcast_destinations, flipflops_destinations, conjunction_destinations, conjunction_sources, name_to_id, first_module
-#
-# def push_button(state, destination_type, broadcast_destinations, flipflops_destinations, conjunction_destinations, conjunction_sources, name_to_id, first_module):
-#     pulses_low = 0
-#     pulses_high = 0
-#     pulses = []
-#     pulse_queue = deque([('button', False, first_module)])
-#     state = [
-#         [x for x in state[0]],
-#         [[y for y in x] for x in state[1]]
-#     ]
-#
-#     flipflop_ids = {name: id for id, name in enumerate(flipflops_destinations)}
-#     conjunction_ids = {name: id for id, name in enumerate(conjunction_destinations)}
-#     conjunction_source_ids = {destination_name: {source_name: source_id for source_id, source_name in enumerate(conjunction_sources[destination_name])} for destination_name in conjunction_sources}
-#
-#     while pulse_queue:
-#         source_module, pulse, destination_module = pulse_queue.popleft()
-#
-#         # accounting
-#         if pulse:
-#             pulses_high += 1
-#         else:
-#             pulses_low += 1
-#         pulses.append((source_module, pulse, destination_module))
-#
-#         module_type = destination_type[destination_module]
-#
-#         if module_type == 'flip-flop':
-#             if not pulse:
-#                 flipflop_id = flipflop_ids[destination_module]
-#                 state[0][flipflop_id] = not state[0][flipflop_id]
-#                 pulse_queue.append((destination_module, state[0][flipflop_id], flipflops_destinations[destination_module]))
-#
-#         elif module_type == 'conjunction':
-#             conjunction_id = conjunction_ids[destination_module]
-#             source_id = conjunction_source_ids[destination_module][source_module]
-#             state[1][conjunction_id][source_id] = pulse
-#             pulse_queue.append((destination_module, not all(state[1][conjunction_id]), conjunction_destinations[destination_module]))
-#
-#         elif module_type == 'broadcast':
-#             for broadcast_destination in broadcast_destinations[destination_module]:
-#                 pulse_queue.append((destination_module, pulse, broadcast_destination))
-#
-#     state = (
-#         tuple(x for x in state[0]),
-#         tuple(tuple(y for y in x) for x in state[1])
-#     )
-#     for source, pulse, destination in pulses:
-#         print(f'{source} -{'high' if pulse else 'low'}-> {destination}')
-#     return state, pulses_low, pulses_high
-#
-# def part_a(data):
-#     destination_type, broadcast_destinations, flipflops_destinations, conjunction_destinations, conjunction_sources, name_to_id, first_module = parse_data(data)
-#     state = (
-#         tuple(False for _ in flipflops_destinations),
-#         tuple(tuple(False for _ in conjunction_sources[name]) for name in conjunction_destinations)
-#     )
-#     count_low = 0
-#     count_high = 0
-#     for _ in range(1000):
-#         state, pulses_low, pulses_high = push_button(state, destination_type, broadcast_destinations, flipflops_destinations, conjunction_destinations, conjunction_sources, name_to_id, first_module)
-#         count_low += pulses_low
-#         count_high += pulses_high
-#
-#     solution = count_low * count_high
-#     return solution
 
 def parse_input(s):
     wiring = {}
@@ -130,7 +21,7 @@ def parse_input(s):
 
     memory = {}
 
-    input_map = collections.defaultdict(list)
+    input_map = defaultdict(list)
 
     for source, (_type, destinations) in wiring.items():
         for destination in destinations:
@@ -212,7 +103,7 @@ def part_b(wiring):
             generated_pulses, memory = process_pulse(wiring, memory, source, module, signal)
             queue += generated_pulses
 
-    return math.lcm(*cycle_length.values())
+    return lcm(*cycle_length.values())
 
 
 def main():
