@@ -61,9 +61,6 @@ def disintegrate(brick, bricks_above, bricks_below):
 def part_a(data):
     bricks = parse_data(data)
 
-    for brick in bricks:
-        if brick[0] > brick[3] or brick[1] > brick[4] or brick[2] > brick[5]:
-            print('PANIC')
     fallen_bricks, bricks_above, bricks_below = place_brick(bricks)
 
     return sum(disintegrate(brick, bricks_above, bricks_below) == 1 for brick in fallen_bricks)
