@@ -7,17 +7,17 @@ def parse_data(data):
 
 def part_a(data):
     data = parse_data(data)
-    return 0
+    return None
 
 
 def part_b(data):
     data = parse_data(data)
-    return 0
+    return None
 
 
 def main():
     examples = [
-        ("""""", 1, 1)
+        ("""""", None, None)
     ]
     day = int(__file__.split('/')[-1].split('.')[0][-2:])
     run_puzzle(day, part_a, part_b, examples)
